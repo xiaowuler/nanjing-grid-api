@@ -1,0 +1,17 @@
+server:
+  port: 9006
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb://10.124.102.42:27017/forecast_values
+  datasource:
+    url: jdbc:mysql://10.124.102.42:3306/nanjing_test?characterEncoding=utf-8
+    driver-class-name: com.mysql.jdbc.Driver
+    username: root
+    password: Abc123
+
+#mybatis配置mapper.xml文件位置以及包扫描
+mybatis:
+   mapper-locations: classpath*:mapper/*.xml #mapper文件扫描
+   type-aliases-package: com.pingchuan.api.model #别名扫描

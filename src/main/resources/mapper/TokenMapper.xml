@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pingchuan.api.mapper.TokenMapper">
+
+    <insert id="insertOne" parameterType="com.pingchuan.api.model.Token">
+        INSERT INTO tokens VALUES (#{token.callerCode}, #{token.token})
+    </insert>
+
+    <select id="findOneByCallerCode" resultType="com.pingchuan.api.model.Token">
+        select caller_code code, token from tokens where caller_code = #{code}
+    </select>
+
+    <delete id="deleteOneByCallerCode">
+        DELETE FROM tokens WHERE caller_code = #{code};
+    </delete>
+</mapper>
