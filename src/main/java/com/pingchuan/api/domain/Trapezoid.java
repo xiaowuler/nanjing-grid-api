@@ -15,13 +15,13 @@ import java.util.List;
  **/
 
 @Data
-public class Trapez {
+public class Trapezoid {
 
     @Id
     private ObjectId id;
 
-    @Field("trapez_info_id")
-    private ObjectId trapezInfoId;
+    @Field("trapezoid_info_id")
+    private ObjectId trapezoidInfoId;
 
     private Double[] loc;
 
@@ -36,8 +36,5 @@ public class Trapez {
     private Double altitude;
 
     private String description;
-
-    @DBRef
-    private List<ElementValue> elementValues;
 
 }

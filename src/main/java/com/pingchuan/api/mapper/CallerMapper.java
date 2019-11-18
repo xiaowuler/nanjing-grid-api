@@ -9,5 +9,4 @@ public interface CallerMapper {
 
     Caller findOneByUsernameAndPassword(@Param("username") String username, @Param("password") String password);
 
-
 }

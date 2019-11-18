@@ -1,5 +1,6 @@
 package com.pingchuan.api.dto.base;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -15,6 +16,7 @@ import java.util.List;
 @Data
 public class ForecastInfo {
 
+    @JsonFormat(locale="zh", timezone="GMT+8", pattern="yyyy-MM-dd HH:mm:ss")
     @Field("forecast_time")
     private Date forecastTime;
 

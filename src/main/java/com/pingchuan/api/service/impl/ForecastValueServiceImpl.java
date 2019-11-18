@@ -1,6 +1,7 @@
 package com.pingchuan.api.service.impl;
 
 import com.pingchuan.api.dao.ForecastValueDao;
+import com.pingchuan.api.dto.base.Element;
 import com.pingchuan.api.dto.base.LineInfo;
 import com.pingchuan.api.dto.base.PointInfo;
 import com.pingchuan.api.dto.base.ThresholdInfo;
@@ -26,64 +27,69 @@ public class ForecastValueServiceImpl implements ForecastValueService {
     private ForecastValueDao forecastValueDao;
 
     @Override
-    public PointInfo findNJGridsByArea(AreaParameter pointByArea) {
+    public List<Element> findNJGridsByArea(AreaParameter pointByArea) {
         return forecastValueDao.findNJGridsByArea(pointByArea.getUpdateDate(), pointByArea.getStartDate(), pointByArea.getForecastDate(), pointByArea.getAreaCode(), pointByArea.getElementCode().toUpperCase(), pointByArea.getForecastModel().toUpperCase(), null, pointByArea.isNeedElementCode());
     }
 
     @Override
-    public PointInfo findNJGridsByAreaAllElement(AreaParameter pointByArea) {
+    public List<Element> findNJGridsByAreaAllElement(AreaParameter pointByArea) {
         return forecastValueDao.findNJGridsByArea(pointByArea.getUpdateDate(), pointByArea.getStartDate(), pointByArea.getForecastDate(), pointByArea.getAreaCode(), "", pointByArea.getForecastModel().toUpperCase(),null, pointByArea.isNeedElementCode());
     }
 
     @Override
-    public PointInfo findNJGridsByLocation(LocationParameter location) {
+    public List<Element> findNJGridsByLocation(LocationParameter location) {
         return forecastValueDao.findNJGridsByLocation(location.getElementCode(), location.getLocations(), location.getStartDate(), location.getUpdateDate(), location.getForecastDate(), location.getForecastModel(), null, location.isNeedElementCode());
     }
 
     @Override
-    public LineInfo findNJGridsByForecastTimeRange(LineParameter line) {
+    public List<Element> findNJGridsByForecastTimeRange(LineParameter line) {
         return forecastValueDao.findNJGridsByForecastTimeRange(line);
     }
 
     @Override
-    public PointInfo findNJGridsByTimeEffect(TimeEffectParameter area) {
+    public List<Element> findNJGridsByTimeEffect(TimeEffectParameter area) {
         return forecastValueDao.findNJGridsByArea(area.getUpdateDate(), area.getStartDate(), area.getForecastDate(), area.getAreaCode(), area.getElementCode().toUpperCase(), area.getForecastModel().toUpperCase(),null, area.isNeedElementCode());
     }
 
     @Override
-    public PointInfo findNJGridsByTimeEffectAllElement(TimeEffectParameter area) {
+    public List<Element> findNJGridsByTimeEffectAllElement(TimeEffectParameter area) {
         return forecastValueDao.findNJGridsByArea(area.getUpdateDate(), area.getStartDate(), area.getForecastDate(), area.getAreaCode(), null, area.getForecastModel().toUpperCase(),null, area.isNeedElementCode());
     }
 
     @Override
-    public List<ThresholdInfo> findNJGridsByElementThresholdArea(ThresholdAreaParameter thresholdArea) {
-
+    public List<Element> findNJGridsByElementThresholdArea(ThresholdAreaParameter thresholdArea) {
+        List<Element> elementList = new ArrayList<>();
         List<ThresholdInfo> thresholdInfos = new ArrayList<>();
         for(double[] threshold : thresholdArea.getThresholdValues()) {
-            if (StringUtils.isEmpty(threshold))
+            if (StringUtils.isEmpty(threshold)) {
                 continue;
+            }
 
-            PointInfo pointInfo = forecastValueDao.findNJGridsByArea(thresholdArea.getUpdateDate(), thresholdArea.getStartDate(), thresholdArea.getForecastDate(), thresholdArea.getAreaCode(), thresholdArea.getElementCode(), thresholdArea.getForecastModel().toUpperCase(),null, thresholdArea.isNeedElementCode());
-            if (StringUtils.isEmpty(pointInfo))
-                thresholdInfos.add(createThresholdInfo(pointInfo, threshold));
+            List<Element> elements = forecastValueDao.findNJGridsByArea(thresholdArea.getUpdateDate(), thresholdArea.getStartDate(), thresholdArea.getForecastDate(), thresholdArea.getAreaCode(), thresholdArea.getElementCode(), thresholdArea.getForecastModel().toUpperCase(), null, thresholdArea.isNeedElementCode());
+            if (elements.size() > 0) {
+                elements.get(0).setThreshold(threshold);
+                elementList.add(elements.get(0));
+            }
         }
 
-        return thresholdInfos;
+        return elementList;
     }
 
     @Override
-    public List<ThresholdInfo> findNJGridsByElementThresholdLocation(ThresholdLocationParameter thresholdLocation) {
-        List<ThresholdInfo> thresholdInfos = new ArrayList<>();
+    public List<Element> findNJGridsByElementThresholdLocation(ThresholdLocationParameter thresholdLocation) {
+        List<Element> elementList = new ArrayList<>();
         for(double[] threshold : thresholdLocation.getThresholdValues()) {
-            if (StringUtils.isEmpty(threshold))
-                continue;
+            if (StringUtils.isEmpty(threshold)) {
+            }
 
-            PointInfo pointInfo = forecastValueDao.findNJGridsByLocation(thresholdLocation.getElementCode(), thresholdLocation.getLocations(), thresholdLocation.getStartDate(), thresholdLocation.getUpdateDate(), thresholdLocation.getForecastDate(), thresholdLocation.getForecastModel(), threshold, thresholdLocation.isNeedElementCode());
-            if (!StringUtils.isEmpty(pointInfo))
-                thresholdInfos.add(createThresholdInfo(pointInfo, threshold));
+            List<Element> elements = forecastValueDao.findNJGridsByLocation(thresholdLocation.getElementCode(), thresholdLocation.getLocations(), thresholdLocation.getStartDate(), thresholdLocation.getUpdateDate(), thresholdLocation.getForecastDate(), thresholdLocation.getForecastModel(), threshold, thresholdLocation.isNeedElementCode());
+            if (elements.size() > 0) {
+                elements.get(0).setThreshold(threshold);
+                elementList.add(elements.get(0));
+            }
         }
 
-        return thresholdInfos;
+        return elementList;
     }
 
     private ThresholdInfo createThresholdInfo(PointInfo pointInfo, double[] threshold){

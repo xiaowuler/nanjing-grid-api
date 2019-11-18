@@ -6,7 +6,6 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.sun.org.apache.bcel.internal.generic.ALOAD;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Date;

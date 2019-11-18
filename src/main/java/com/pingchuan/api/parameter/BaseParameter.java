@@ -44,16 +44,18 @@ public class BaseParameter{
         startDate = check.checkTime(startTime, "startTime");
         updateDate = check.checkTime(updateTime, "updateTime");
         forecastModel = check.checkString(forecastModel, "forecastModel");
-        if (isNeedElementCode)
+        if (isNeedElementCode) {
             elementCode = check.checkString(elementCode, "elementCode");
+        }
 
         return null;
     }
 
     public boolean verifyToken(){
 
-        if (StringUtils.isEmpty(token))
+        if (StringUtils.isEmpty(token)) {
             return false;
+        }
 
         callerCode = SignUtil.getClaim(token, "userCode");
         return SignUtil.verify(token);

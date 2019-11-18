@@ -1,5 +1,6 @@
 package com.pingchuan.api.dto.base;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import com.alibaba.fastjson.annotation.JSONField;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -16,15 +17,15 @@ import java.util.List;
 @Data
 public class PointInfo {
 
-    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(locale="zh", timezone="GMT+8", pattern="yyyy-MM-dd HH:mm:ss")
     @Field("start_time")
     private Date startTime;
 
-    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(locale="zh", timezone="GMT+8", pattern="yyyy-MM-dd HH:mm:ss")
     @Field("forecast_time")
     private Date forecastTime;
 
-    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(locale="zh", timezone="GMT+8", pattern="yyyy-MM-dd HH:mm:ss")
     @Field("update_time")
     private Date updateTime;
 

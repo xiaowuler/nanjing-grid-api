@@ -3,6 +3,7 @@ package com.pingchuan.api.controller;
 import com.pingchuan.api.annotation.Action;
 import com.pingchuan.api.contants.ResultCode;
 import com.pingchuan.api.dao.InterfaceLogService;
+import com.pingchuan.api.dto.base.Element;
 import com.pingchuan.api.dto.base.LineInfo;
 import com.pingchuan.api.dto.base.PointInfo;
 import com.pingchuan.api.dto.base.ThresholdInfo;
@@ -38,97 +39,105 @@ public class BaseForecastController {
     @RequestMapping("/findNJGridsByArea")
     @Action(isNeedElementCode = true, apiId = 1)
     public ApiResponse findNJGridsByArea(AreaParameter area){
-        PointInfo pointInfo = forecastValueService.findNJGridsByArea(area);
-        if (StringUtils.isEmpty(pointInfo))
+        List<Element> elements = forecastValueService.findNJGridsByArea(area);
+        if (elements.size() == 0) {
             return new ApiResponse(ResultCode.NULL_VALUE, "未查询到值", null);
-        return new ApiResponse(ResultCode.SUCCESS, "查询成功", pointInfo);
+        }
+        return new ApiResponse(ResultCode.SUCCESS, "查询成功", elements.get(0));
     }
 
     @Action(isNeedElementCode = false, apiId = 2)
     @RequestMapping("/findNJGridsByAreaAllElement")
     public ApiResponse findNJGridsByAreaAllElement(AreaParameter area){
-        PointInfo pointInfo = forecastValueService.findNJGridsByAreaAllElement(area);
-        if (StringUtils.isEmpty(pointInfo))
+        List<Element> elements = forecastValueService.findNJGridsByAreaAllElement(area);
+        if (elements.size() == 0) {
             return new ApiResponse(ResultCode.NULL_VALUE, "未查询到值", null);
-        return new ApiResponse(ResultCode.SUCCESS, "查询成功", pointInfo);
+        }
+        return new ApiResponse(ResultCode.SUCCESS, "查询成功", elements.get(0));
     }
 
     @Action(isNeedElementCode = true, apiId = 3)
     @RequestMapping("/findNJGridsByLocation")
     public ApiResponse findNJGridsByLocation(LocationParameter location){
 
-        PointInfo pointInfo = forecastValueService.findNJGridsByLocation(location);
-        if (StringUtils.isEmpty(pointInfo))
+        List<Element> elements = forecastValueService.findNJGridsByLocation(location);
+        if (elements.size() == 0) {
             return new ApiResponse(ResultCode.NULL_VALUE, "未查询到值", null);
-        return new ApiResponse(ResultCode.SUCCESS, "查询成功", pointInfo);
+        }
+        return new ApiResponse(ResultCode.SUCCESS, "查询成功", elements.get(0));
     }
 
     @Action(isNeedElementCode = false, apiId = 4)
     @RequestMapping("/findNJGridsByLocationAllElement")
     public ApiResponse findNJGridsByLocationAllElement(LocationParameter location){
 
-        PointInfo pointInfo = forecastValueService.findNJGridsByLocation(location);
-        if (StringUtils.isEmpty(pointInfo))
+        List<Element> elements = forecastValueService.findNJGridsByLocation(location);
+        if (elements.size() == 0) {
             return new ApiResponse(ResultCode.NULL_VALUE, "未查询到值", null);
-        return new ApiResponse(ResultCode.SUCCESS, "查询成功", pointInfo);
+        }
+        return new ApiResponse(ResultCode.SUCCESS, "查询成功", elements.get(0));
     }
 
     @Action(isNeedElementCode = true, apiId = 5)
     @RequestMapping("/findNJGridsByForecastTimeRange")
     public ApiResponse findNJGridsByForecastTimeRange(LineParameter line){
-        LineInfo lineInfo =forecastValueService.findNJGridsByForecastTimeRange(line);
-        if (StringUtils.isEmpty(lineInfo))
+        List<Element> elements =forecastValueService.findNJGridsByForecastTimeRange(line);
+        if (elements.size() == 0) {
             return new ApiResponse(ResultCode.NULL_VALUE, "未查询到值", null);
-        return new ApiResponse(ResultCode.SUCCESS, "查询成功", lineInfo);
+        }
+        return new ApiResponse(ResultCode.SUCCESS, "查询成功", elements.get(0));
     }
 
     @Action(isNeedElementCode = false, apiId = 6)
     @RequestMapping("/findNJGridsByForecastTimeRangeAllElement")
     public ApiResponse findNJGridsByForecastTimeRangeAllElement(LineParameter line){
-        LineInfo lineInfo =forecastValueService.findNJGridsByForecastTimeRange(line);
-        if (StringUtils.isEmpty(lineInfo))
+        List<Element> elements =forecastValueService.findNJGridsByForecastTimeRange(line);
+        if (elements.size() == 0) {
             return new ApiResponse(ResultCode.NULL_VALUE, "未查询到值", null);
-        return new ApiResponse(ResultCode.SUCCESS, "查询成功", lineInfo);
+        }
+        return new ApiResponse(ResultCode.SUCCESS, "查询成功", elements.get(0));
     }
 
     @Action(isNeedElementCode = false, apiId = 7)
     @RequestMapping("/findNJGridsByTimeEffect")
     public ApiResponse findNJGridsByTimeEffect(TimeEffectParameter area){
 
-        PointInfo pointInfo = forecastValueService.findNJGridsByTimeEffect(area);
-
-        if (StringUtils.isEmpty(pointInfo))
+        List<Element> elements = forecastValueService.findNJGridsByTimeEffect(area);
+        if (elements.size() == 0) {
             return new ApiResponse(ResultCode.NULL_VALUE, "未查询到值", null);
-        return new ApiResponse(ResultCode.SUCCESS, "查询成功", pointInfo);
+        }
+        return new ApiResponse(ResultCode.SUCCESS, "查询成功", elements.get(0));
     }
 
     @Action(isNeedElementCode = false, apiId = 8)
     @RequestMapping("/findNJGridsByTimeEffectAllElement")
     public ApiResponse findNJGridsByTimeEffectAllElement(TimeEffectParameter area){
 
-        PointInfo pointInfo = forecastValueService.findNJGridsByTimeEffectAllElement(area);
-
-        if (StringUtils.isEmpty(pointInfo))
+        List<Element> elements = forecastValueService.findNJGridsByTimeEffectAllElement(area);
+        if (elements.size() == 0) {
             return new ApiResponse(ResultCode.NULL_VALUE, "未查询到值", null);
-        return new ApiResponse(ResultCode.SUCCESS, "查询成功", pointInfo);
+        }
+        return new ApiResponse(ResultCode.SUCCESS, "查询成功", elements.get(0));
     }
 
     @Action(isNeedElementCode = true, apiId = 9)
     @RequestMapping("/findNJGridsByElementThresholdArea")
     public ApiResponse findNJGridsByElementThresholdArea(ThresholdAreaParameter thresholdArea){
-        List<ThresholdInfo> thresholdInfos = forecastValueService.findNJGridsByElementThresholdArea(thresholdArea);
-        if (thresholdInfos.size() == 0)
+        List<Element> elements = forecastValueService.findNJGridsByElementThresholdArea(thresholdArea);
+        if (elements.size() == 0) {
             return new ApiResponse(ResultCode.NULL_VALUE, "未查询到值", null);
-        return new ApiResponse(ResultCode.SUCCESS, "查询成功", thresholdInfos);
+        }
+        return new ApiResponse(ResultCode.SUCCESS, "查询成功", elements);
     }
 
     @Action(isNeedElementCode = true, apiId = 10)
     @RequestMapping("/findNJGridsByElementThresholdLocation")
     public ApiResponse findNJGridsByElementThresholdLocation(ThresholdLocationParameter thresholdLocation){
-        List<ThresholdInfo> thresholdInfos = forecastValueService.findNJGridsByElementThresholdLocation(thresholdLocation);
-        if (thresholdInfos.size() == 0)
+        List<Element> elements = forecastValueService.findNJGridsByElementThresholdLocation(thresholdLocation);
+        if (elements.size() == 0) {
             return new ApiResponse(ResultCode.NULL_VALUE, "未查询到值", null);
-        return new ApiResponse(ResultCode.SUCCESS, "查询成功", thresholdInfos);
+        }
+        return new ApiResponse(ResultCode.SUCCESS, "查询成功", elements);
     }
 
 }

@@ -60,8 +60,9 @@ public class CalcAop {
 
             //验证接口访问
             Interface api = interfaceService.findOneById(action.apiId());
-            if (api == null || api.getEnabled() == 0)
+            if (api == null || api.getEnabled() == 0) {
                 return new ApiResponse(ResultCode.API_INVALID, "接口未开启", null);
+            }
 
             //验证token;
             Parameter parameter = (Parameter) proceedingJoinPoint.getArgs()[0];
@@ -85,7 +86,7 @@ public class CalcAop {
             }
 
             //验证参数
-            List<String> errors = parameter.checkCode(true);
+            List<String> errors = parameter.checkCode(action.isArea());
             if (errors.size() > 0)
             {
                 String errorMsg = String.join(",", errors);

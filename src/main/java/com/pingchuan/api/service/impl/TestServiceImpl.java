@@ -1,24 +1,15 @@
 package com.pingchuan.api.service.impl;
 
 import com.pingchuan.api.dao.TestDao;
-import com.pingchuan.api.domain.ElementValue;
-import com.pingchuan.api.domain.Trapez;
 import com.pingchuan.api.service.TestService;
-import com.pingchuan.api.util.RemoveDollarOperation;
 import org.bson.Document;
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.Point;
-import org.springframework.data.geo.Polygon;
-import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.*;
-import org.springframework.data.mongodb.core.geo.GeoJson;
-import org.springframework.data.mongodb.core.geo.GeoJsonMultiPolygon;
 import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.NearQuery;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 

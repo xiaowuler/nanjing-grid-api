@@ -31,9 +31,25 @@ public class CheckParameter {
             return null;
         }
 
-        Date time = ConvertTimeStr(timeStr);
+        Date time = convertTimeStr(timeStr);
         if (StringUtils.isEmpty(time))
             errors.add(String.format("%s 格式不正确，日期格式：%s", parameterName, TimeFormat.PARAMETER_TIME));
+        else
+            return time;
+
+        return null;
+    }
+
+    public Date checkDate(String timeStr, String parameterName){
+        if (StringUtils.isEmpty(timeStr))
+        {
+            errors.add(String.format("%s不能为空", parameterName));
+            return null;
+        }
+
+        Date time = convertDateStr(timeStr);
+        if (StringUtils.isEmpty(time))
+            errors.add(String.format("%s 格式不正确，日期格式：%s", parameterName, TimeFormat.ELEMENT_VALUES_NAME));
         else
             return time;
 
@@ -77,6 +93,23 @@ public class CheckParameter {
         return null;
     }
 
+    public double[] checkSingleLocation(String location){
+
+        if (StringUtils.isEmpty(location))
+        {
+            errors.add("location不能为空");
+            return null;
+        }
+
+        try{
+            return JSON.parseObject(location, new TypeReference<double[]>(){});
+        }catch (Exception e){
+            errors.add("location 格式不正确，格式应为'[lon,lat]'");
+        }
+
+        return null;
+    }
+
     public List<double[]> checkThreshold(String threshold){
 
         if (StringUtils.isEmpty(threshold))
@@ -94,9 +127,18 @@ public class CheckParameter {
         return null;
     }
 
-    private Date ConvertTimeStr(String timeStr){
+    private Date convertTimeStr(String timeStr){
         try {
             return TimeFormatUtil.CovertStringToDate(TimeFormat.PARAMETER_TIME, timeStr);
+        } catch (ParseException e) {
+
+        }
+        return null;
+    }
+
+    private Date convertDateStr(String timeStr){
+        try {
+            return TimeFormatUtil.CovertStringToDate(TimeFormat.ELEMENT_VALUES_NAME, timeStr);
         } catch (ParseException e) {
 
         }
