@@ -7,12 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Field;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.bind;
 
 @Component
 public class RealDaoImpl implements RealDao {
@@ -29,7 +32,7 @@ public class RealDaoImpl implements RealDao {
 
         LookupOperation realInfoLookup = Aggregation.lookup("real_infos", "trapezoid_info_id", "trapezoid_info_id", "real_infos");
         UnwindOperation realInfoUnwind = Aggregation.unwind("real_infos");
-        MatchOperation realInfoMatch = Aggregation.match(Criteria.where("real_infos.is_finished").is(true).andOperator(Criteria.where("real_infos.real_time").lt(endRealDate), Criteria.where("real_infos.real_time").gte(startRealDate)));
+        MatchOperation realInfoMatch = Aggregation.match(Criteria.where("real_infos.is_finished").is(true).and("real_infos.real_time").gte(startRealDate).lte(endRealDate));
         ProjectionOperation realInfoProject = Aggregation.project("real_infos.real_time", "real_infos.element_code", "loc", "grid_code", "area_code", "area_name").and("real_infos._id").concat("$grid_code").as("element_value_id");
         aggregationOperations.addAll(AggregationUtil.SetAggregationOperation(realInfoLookup, realInfoUnwind, realInfoMatch, realInfoProject));
 
@@ -42,6 +45,10 @@ public class RealDaoImpl implements RealDao {
         UnwindOperation elementValueUnwind = Aggregation.unwind("element_values");
         ProjectionOperation elementValueProject = Aggregation.project("real_time", "element_code", "loc", "grid_code", "area_code", "area_name", "element_values.value").andExclude("_id");
         aggregationOperations.addAll(AggregationUtil.SetAggregationOperation(elementValueLookup, elementValueUnwind, null, elementValueProject));
+
+        Fields realFields = Fields.fields("element_code", "loc", "grid_code", "area_code", "area_name");
+        aggregationOperations.add(Aggregation.project(realFields).and("real").nested(bind("real_time", "real_time").and("value")));
+        aggregationOperations.add(Aggregation.group(realFields).push("real").as("reals"));
 
         Aggregation aggregation = Aggregation.newAggregation(aggregationOperations);
         List<Document> documents = mongoTemplate.aggregate(aggregation, "trapezoids", Document.class).getMappedResults();
