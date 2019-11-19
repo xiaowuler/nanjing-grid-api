@@ -48,7 +48,7 @@ public class ForecastValueServiceImpl implements ForecastValueService {
 
     @Override
     public List<Element> findNJGridsByTimeEffect(TimeEffectParameter area) {
-        return forecastValueDao.findNJGridsByArea(area.getUpdateDate(), area.getStartDate(), area.getForecastDate(), area.getAreaCode(), area.getElementCode().toUpperCase(), area.getForecastModel().toUpperCase(),null, area.isNeedElementCode());
+        return forecastValueDao.findNJGridsByArea(area.getUpdateDate(), area.getStartDate(), area.getForecastDate(), area.getAreaCode(), area.getElementCode(), area.getForecastModel().toUpperCase(),null, area.isNeedElementCode());
     }
 
     @Override
@@ -80,6 +80,7 @@ public class ForecastValueServiceImpl implements ForecastValueService {
         List<Element> elementList = new ArrayList<>();
         for(double[] threshold : thresholdLocation.getThresholdValues()) {
             if (StringUtils.isEmpty(threshold)) {
+                continue;
             }
 
             List<Element> elements = forecastValueDao.findNJGridsByLocation(thresholdLocation.getElementCode(), thresholdLocation.getLocations(), thresholdLocation.getStartDate(), thresholdLocation.getUpdateDate(), thresholdLocation.getForecastDate(), thresholdLocation.getForecastModel(), threshold, thresholdLocation.isNeedElementCode());

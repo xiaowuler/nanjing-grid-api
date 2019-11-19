@@ -29,7 +29,7 @@ public class TotalCalc {
 
     @Field("time_effect")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private int timeEffect;
+    private Integer timeEffect;
 
     @Field("element_code")
     @JsonInclude(JsonInclude.Include.NON_NULL)

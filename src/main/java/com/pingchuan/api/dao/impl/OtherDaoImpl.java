@@ -57,8 +57,10 @@ public class OtherDaoImpl implements OtherDao {
         aggregationOperations.add(Aggregation.project(elementCodeFields).and("element_code").nested(bind("element_code", "element_code").and("start_time")));
         aggregationOperations.add(Aggregation.group(elementCodeFields).push("element_code").as("element_codes"));
 
+        aggregationOperations.add(Aggregation.project("element_codes").and("_id").as("forecast_model"));
         Aggregation aggregation = Aggregation.newAggregation(aggregationOperations);
         List<ElementTime> elementTimes = mongoTemplate.aggregate(aggregation, "elements", ElementTime.class).getMappedResults();
+
         return elementTimes;
     }
 
@@ -92,8 +94,10 @@ public class OtherDaoImpl implements OtherDao {
         aggregationOperations.add(Aggregation.project(elementCodeFields).and("element_code").nested(bind("element_code", "element_code").and("start_times")));
         aggregationOperations.add(Aggregation.group(elementCodeFields).push("element_code").as("element_codes"));
 
+        aggregationOperations.add(Aggregation.project("element_codes").and("_id").as("forecast_model"));
         Aggregation aggregation = Aggregation.newAggregation(aggregationOperations);
         List<ElementTime> elementTimes = mongoTemplate.aggregate(aggregation, "elements", ElementTime.class).getMappedResults();
+
         return elementTimes;
     }
 

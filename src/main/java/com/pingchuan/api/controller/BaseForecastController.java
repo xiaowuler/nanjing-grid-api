@@ -23,18 +23,12 @@ import java.util.List;
  * @author: XW
  * @create: 2019-11-07 15:28
  **/
-@RequestMapping("weatherSearchService")
+@RequestMapping("/baseSearch")
 @RestController
 public class BaseForecastController {
 
     @Autowired
     private ForecastValueService forecastValueService;
-
-    @Autowired
-    private InterfaceLogService interfaceLogService;
-
-    @Autowired
-    private TokenService tokenService;
 
     @RequestMapping("/findNJGridsByArea")
     @Action(isNeedElementCode = true, apiId = 1)

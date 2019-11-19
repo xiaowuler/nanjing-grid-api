@@ -98,11 +98,8 @@ public class ForecastValueDaoImpl implements ForecastValueDao {
     @Override
     public List<Element> findNJGridsByLocation(String elementCode, List<double[]> locations, Date startDate, Date updateDate, Date forecastDate, String forecastModel, double[] threshold, boolean isNeedElementCode) {
         List<AggregationOperation> aggregationOperations = new ArrayList<>();
-
-        MatchOperation trapezoidMatch = Aggregation.match(Criteria.where("_id").in(findAllTrapezoidIdByLocation(locations)));
-        ProjectionOperation trapezoidProject = project(trapezoidFields).andExclude("_id");
-        aggregationOperations.add(trapezoidMatch);
-        aggregationOperations.add(trapezoidProject);
+        aggregationOperations.add(Aggregation.match(Criteria.where("_id").in(findAllTrapezoidIdByLocation(locations))));
+        aggregationOperations.add(project(trapezoidFields).andExclude("_id"));
 
         LookupOperation elementInfoLookup = Aggregation.lookup("element_infos", "trapezoid_info_id", "trapezoid_info_id", "element_infos");
         UnwindOperation elementInfoUnwind = Aggregation.unwind("element_infos");
@@ -115,7 +112,7 @@ public class ForecastValueDaoImpl implements ForecastValueDao {
         ProjectionOperation elementProjection = project("loc", "area_code", "area_name", "grid_code", "start_time", "update_time", "element_code", "forecast_model", "element_info_id");
         aggregationOperations.addAll(AggregationUtil.SetAggregationOperation(elementLookup, elementUnwind, null, elementProjection));
         if (isNeedElementCode){
-            aggregationOperations.add(Aggregation.match(Criteria.where("element.code").is(elementCode)));
+            aggregationOperations.add(Aggregation.match(Criteria.where("element_code").is(elementCode)));
         }
 
         LookupOperation forecastInfoLookup = Aggregation.lookup("forecast_infos", "element_info_id", "element_info_id", "forecast_infos");
@@ -151,13 +148,10 @@ public class ForecastValueDaoImpl implements ForecastValueDao {
 
     @Override
     public List<Element> findNJGridsByForecastTimeRange(LineParameter line) {
-        List<LineInfo> lineInfos = new ArrayList<>();
         List<AggregationOperation> aggregationOperations = new ArrayList<>();
 
-        MatchOperation trapezoidMatch = Aggregation.match(Criteria.where("_id").in(findAllTrapezoidIdByLocation(line.getLocations())));
-        ProjectionOperation trapezoidProject = project(trapezoidFields).andExclude("_id");
-        aggregationOperations.add(trapezoidMatch);
-        aggregationOperations.add(trapezoidProject);
+        aggregationOperations.add(Aggregation.match(Criteria.where("_id").in(findAllTrapezoidIdByLocation(line.getLocations()))));
+        aggregationOperations.add(project(trapezoidFields).andExclude("_id"));
 
         LookupOperation elementInfoLookup = Aggregation.lookup("element_infos", "trapezoid_info_id", "trapezoid_info_id", "element_infos");
         UnwindOperation elementInfoUnwind = Aggregation.unwind("element_infos");
@@ -211,7 +205,7 @@ public class ForecastValueDaoImpl implements ForecastValueDao {
             return null;
         }
 
-        return Aggregation.match(Criteria.where("elements._id").is(elementCode));
+        return Aggregation.match(Criteria.where("element_code").is(elementCode));
     }
 
     private GeoJsonMultiPoint getGeoJsonMultiPoint(List<double[]> locations){

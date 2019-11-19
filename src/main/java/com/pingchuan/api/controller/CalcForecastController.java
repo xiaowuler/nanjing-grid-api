@@ -24,7 +24,7 @@ import java.util.List;
  **/
 
 @RestController
-@RequestMapping("/calcForecast")
+@RequestMapping("/calcSearch")
 public class CalcForecastController {
 
     @Autowired
