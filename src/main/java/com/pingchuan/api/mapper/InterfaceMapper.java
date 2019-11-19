@@ -7,4 +7,6 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface InterfaceMapper {
     Interface findOneById(@Param("id") int id);
+
+    void updateOne(@Param("id") Integer interfaceId, @Param("state") byte state);
 }

@@ -107,27 +107,36 @@ public class CalcAop {
             return apiResponse;
 
         }catch (Exception e){
-
-            if(!StringUtils.isEmpty(interfaceLog.getStartTime()))
-                interfaceLog.setEndTime(System.currentTimeMillis());
-
-            interfaceLog.setErrorMessage(e.getMessage());
-            return new ApiResponse(ResultCode.FAILED, e.toString(), null);
+            return getExceptionResult(e.toString());
 
         } catch (Throwable throwable) {
-            if(!StringUtils.isEmpty(interfaceLog.getStartTime()))
-                interfaceLog.setEndTime(System.currentTimeMillis());
-
-            interfaceLog.setErrorMessage(throwable.getMessage());
-            return new ApiResponse(ResultCode.FAILED, throwable.toString(), null);
+            return getExceptionResult(throwable.toString());
         }
     }
 
     @After("annotationPointCut()")
     public void after(){
         interfaceLog.setStopTime(System.currentTimeMillis());
-        if (!StringUtils.isEmpty(interfaceLog.getCallerCode()))
+        if (!StringUtils.isEmpty(interfaceLog.getCallerCode())) {
             interfaceLogService.insertOne(interfaceLog);
+        }
+
+        if (!StringUtils.isEmpty(interfaceLog.getInterfaceId())){
+            interfaceService.updateOne(interfaceLog.getInterfaceId(), (byte) 1);
+        }
+    }
+
+    private ApiResponse getExceptionResult(String errorMsg){
+        if(!StringUtils.isEmpty(interfaceLog.getStartTime())) {
+            interfaceLog.setEndTime(System.currentTimeMillis());
+        }
+
+        if (!StringUtils.isEmpty(interfaceLog.getInterfaceId())){
+            interfaceService.updateOne(interfaceLog.getInterfaceId(), (byte) 0);
+        }
+
+        interfaceLog.setErrorMessage(errorMsg);
+        return new ApiResponse(ResultCode.FAILED, errorMsg, null);
     }
 
     private void setInterfaceLog(String errorMsg, byte state){

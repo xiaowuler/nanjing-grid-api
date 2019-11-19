@@ -24,4 +24,9 @@ public class InterfaceServiceImpl implements InterfaceService {
     public Interface findOneById(int id) {
         return interfaceMapper.findOneById(id);
     }
+
+    @Override
+    public void updateOne(Integer interfaceId, byte state) {
+        interfaceMapper.updateOne(interfaceId, state);
+    }
 }
