@@ -223,10 +223,9 @@ public class ForecastValueDaoImpl implements ForecastValueDao {
             }
 
             List<AggregationOperation> aggregationOperations = new ArrayList<>();
-            GeoNearOperation trapezoidGeoNear = Aggregation.geoNear(NearQuery.near(loc[0], loc[1]).limit(1).spherical(true), "distance");
-            aggregationOperations.add(trapezoidGeoNear);
-            ProjectionOperation trapezoidProject = project("_id");
-            aggregationOperations.add(trapezoidProject);
+            aggregationOperations.add(Aggregation.geoNear(NearQuery.near(loc[0], loc[1]).spherical(true), "distance"));
+            aggregationOperations.add(Aggregation.limit(1));
+            aggregationOperations.add(Aggregation.project("_id"));
 
             Aggregation aggregation = Aggregation.newAggregation(aggregationOperations);
             List<Trapezoid> trapezoids = mongoTemplate.aggregate(aggregation, "trapezoids", Trapezoid.class).getMappedResults();
@@ -234,32 +233,6 @@ public class ForecastValueDaoImpl implements ForecastValueDao {
         }
 
         return trapezoidIds;
-    }
-
-    private LineInfo setLineInfo(List<LineInfo> lineInfos){
-
-        if (lineInfos.size() == 0)
-            return null;
-
-        List<ForecastInfo> forecastInfos = getAllForecastInfo(lineInfos);
-        if (forecastInfos.size() == 0)
-            return null;
-
-        Map<Date, List<ForecastInfo>> map = forecastInfos.stream().collect(Collectors.groupingBy(l -> l.getForecastTime()));
-
-        forecastInfos = new ArrayList<>();
-        ForecastInfo forecastInfo;
-        for(Date key : map.keySet()){
-            if (map.get(key).size() == 0)
-                continue;
-            forecastInfo = map.get(key).get(0);
-            forecastInfo.setLocations(map.get(key).stream().map(f -> f.getLocations().get(0)).collect(Collectors.toList()));
-            forecastInfos.add(forecastInfo);
-        }
-
-        LineInfo lineInfo = lineInfos.get(0);
-        lineInfo.setForecasts(forecastInfos);
-        return lineInfo;
     }
 
     private List<ForecastInfo> getAllForecastInfo(List<LineInfo> lineInfos){

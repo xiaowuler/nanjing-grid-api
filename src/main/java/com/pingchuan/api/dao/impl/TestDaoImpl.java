@@ -33,7 +33,7 @@ public class TestDaoImpl implements TestDao {
     @Override
     public Document findLineBaseInfo(Date initialTime, double lon, double lat, String modeCode, String elementCode, String orgCode) {
 
-        GeoNearOperation geoNearOperation = new GeoNearOperation(NearQuery.near(lon, lat).limit(1).spherical(true), "distance");
+        GeoNearOperation geoNearOperation = new GeoNearOperation(NearQuery.near(lon, lat).num(1).spherical(true), "distance");
         ProjectionOperation trapezProject = Aggregation.project("_id", "trapez_info_id", "index", "loc");
 
         LookupOperation trapezInfoLookup = Aggregation.lookup("trapez_infos", "trapez_info_id", "_id", "trapez_infos");
@@ -55,7 +55,7 @@ public class TestDaoImpl implements TestDao {
 
     @Override
     public List<Document> searchLine(Date initialTime, Date startTime, Date endTime, double lon, double lat, String modeCode, String elementCode, String orgCode) {
-        GeoNearOperation geoNearOperation = new GeoNearOperation(NearQuery.near(lon, lat).limit(1).spherical(true), "distance");
+        GeoNearOperation geoNearOperation = new GeoNearOperation(NearQuery.near(lon, lat).num(1).spherical(true), "distance");
         ProjectionOperation trapezProject = Aggregation.project("_id", "trapez_info_id", "index", "loc");
 
         LookupOperation trapezInfoLookup = Aggregation.lookup("trapez_infos", "trapez_info_id", "_id", "trapez_infos");

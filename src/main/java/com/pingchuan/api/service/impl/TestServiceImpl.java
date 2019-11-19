@@ -33,7 +33,7 @@ public class TestServiceImpl implements TestService {
     @Override
     public void testSearch(Date startTime, Date endTime) {
 
-        GeoNearOperation geoNearOperation = new GeoNearOperation(NearQuery.near(121, 33).limit(1).spherical(true), "distance");
+        GeoNearOperation geoNearOperation = new GeoNearOperation(NearQuery.near(121, 33).num(1).spherical(true), "distance");
         ProjectionOperation trapezProject = Aggregation.project("_id", "trapez_info_id", "index", "loc");
 
         LookupOperation trapezInfoLookup = getLookup("trapez_infos", "trapez_info_id", "_id", "trapez_infos");
@@ -59,6 +59,7 @@ public class TestServiceImpl implements TestService {
         List<Document> mappedResults = results.getMappedResults();
     }
 
+    @Override
     public void testRegion(Date startTime, Date endTime){
         Point point = new Point(80, 30);
         Point point1 = new Point(130, 30);

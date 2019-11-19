@@ -22,8 +22,6 @@ public class TestController {
     @Autowired
     private TestService testService;
 
-
-
     @RequestMapping("testSearch")
     public void testSearch(Date startTime, Date endTime){
         //testService.testSearch(startTime, endTime);

@@ -319,10 +319,9 @@ public class CalcForecastDaoImpl implements CalcForecastDao {
             }
 
             List<AggregationOperation> aggregationOperations = new ArrayList<>();
-            GeoNearOperation trapezoidGeoNear = Aggregation.geoNear(NearQuery.near(loc[0], loc[1]).limit(1).spherical(true), "distance");
-            aggregationOperations.add(trapezoidGeoNear);
-            ProjectionOperation trapezoidProject = project("_id");
-            aggregationOperations.add(trapezoidProject);
+            aggregationOperations.add(Aggregation.geoNear(NearQuery.near(loc[0], loc[1]).spherical(true), "distance"));
+            aggregationOperations.add(Aggregation.limit(1));
+            aggregationOperations.add(Aggregation.project("_id"));
 
             Aggregation aggregation = Aggregation.newAggregation(aggregationOperations);
             List<Trapezoid> trapezoids = mongoTemplate.aggregate(aggregation, "trapezoids", Trapezoid.class).getMappedResults();

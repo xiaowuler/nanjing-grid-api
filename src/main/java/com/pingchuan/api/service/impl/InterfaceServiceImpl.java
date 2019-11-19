@@ -1,9 +1,7 @@
 package com.pingchuan.api.service.impl;
 
-import com.pingchuan.api.dao.InterfaceLogService;
 import com.pingchuan.api.mapper.InterfaceMapper;
 import com.pingchuan.api.model.Interface;
-import com.pingchuan.api.model.InterfaceLog;
 import com.pingchuan.api.service.InterfaceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -116,12 +116,8 @@ public class OtherDaoImpl implements OtherDao {
         ProjectionOperation forecastInfoProject = Aggregation.project("start_time", "update_time", "element_code", "forecast_model", "forecast_infos.forecast_time", "forecast_infos.time_effect").andExclude("_id");
         aggregationOperations.addAll(AggregationUtil.SetAggregationOperation(forecastInfoLookup, forecastInfosUnwind, forecastInfoMatch, forecastInfoProject));
 
-//        Fields forecastFields = Fields.fields("start_time", "update_time", "element_code", "forecast_model");
-//        aggregationOperations.add(Aggregation.project(forecastFields).and("forecast").nested(bind("forecast_time", "forecast_time").and("time_effect")));
-//        aggregationOperations.add(Aggregation.group(forecastFields).push("forecast").as("forecasts"));
 
         Fields updateTimeFields = Fields.fields("start_time", "element_code", "forecast_model", "forecast_time");
-        //aggregationOperations.add(Aggregation.project(updateTimeFields).and("update_time").nested(bind("forecast_time", "forecast_time").and("time_effect").and("update_time")));
         aggregationOperations.add(Aggregation.group(updateTimeFields).push("update_time").as("update_dates"));
 
         Fields startTimeFields = Fields.fields("element_code", "forecast_model", "forecast_time");
