@@ -32,7 +32,6 @@ public class UserController {
     @Autowired
     private TokenService tokenService;
 
-    //@Action(name = "/login", isNeedElementCode = true, apiId = 1)
     @RequestMapping("/login")
     public ApiResponse login(UserParameter user){
         List<String> errors = user.checkLoginCode();
@@ -54,7 +53,7 @@ public class UserController {
 
         String callerCode = SignUtil.getClaim(user.getToken(), "userCode");
         if (StringUtils.isEmpty(callerCode))
-            return new ApiResponse(ResultCode.FAILED, "token不正确", null);
+            return new ApiResponse(ResultCode.EXCEPTION, "token不正确", null);
 
         tokenService.deleteOneByCallerCode(callerCode);
 

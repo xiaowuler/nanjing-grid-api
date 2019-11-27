@@ -20,6 +20,4 @@ public class Interface {
     private String explain;
 
     private byte enabled;
-
-    private byte state;
 }

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.pingchuan.api.mapper.InterfaceLogMapper">
     <insert id="insertOne">
-        insert into interface_logs values (null, #{interface.interfaceId}, #{interface.parameters}, #{interface.state}, #{interface.callerCode}, #{interface.errorMessage}, #{interface.createTime}, #{interface.startTime}, #{interface.endTime}, #{interface.stopTime}, #{interface.requestType},#{interface.hostAddress}, #{interface.regionCode})
+        insert into interface_logs values (null, #{interface.interfaceId}, #{interface.parameters}, #{interface.state}, #{interface.callerCode}, #{interface.errorMessage}, #{interface.requestStartTime}, #{interface.executeStartTime}, #{interface.executeEndTime}, #{interface.requestEndTime}, #{interface.requestType}, #{interface.hostAddress}, #{interface.regionCode}, #{interface.resultCode})
     </insert>
 
     <select id="findAll" resultType="com.pingchuan.api.model.InterfaceLog">

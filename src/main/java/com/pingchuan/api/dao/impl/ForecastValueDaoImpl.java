@@ -77,22 +77,23 @@ public class ForecastValueDaoImpl implements ForecastValueDao {
             aggregationOperations.add(Aggregation.match(Criteria.where("value").gte(threshold[0]).lte(threshold[1])));
         }
 
-        Fields forecastFields = Fields.fields("loc", "grid_code", "area_name", "start_time", "update_time", "forecast_model", "element_code", "area_code");
-        aggregationOperations.add(Aggregation.project(forecastFields).and("forecast").nested(bind("forecast_time", "forecast_time").and("time_effect").and("value")));
-        aggregationOperations.add(Aggregation.group(forecastFields).push("forecast").as("forecasts"));
-
-        Fields locationFields = Fields.fields("start_time", "update_time", "forecast_model", "element_code");
-        aggregationOperations.add(Aggregation.project(locationFields).and("location").nested(bind("loc", "loc").and("grid_code").and("area_code").and("area_name").and("forecasts")));
+        Fields locationFields = Fields.fields("start_time", "update_time", "forecast_model", "element_code", "forecast_time", "time_effect", "area_name", "area_code");
+        aggregationOperations.add(Aggregation.project(locationFields).and("location").nested(bind("loc", "loc").and("grid_code").and("value")));
         aggregationOperations.add(Aggregation.group(locationFields).push("location").as("locations"));
 
-        Fields elementCodeFields = Fields.fields("start_time", "update_time", "forecast_model");
-        aggregationOperations.add(Aggregation.project(elementCodeFields).and("element_code").nested(bind("element_code", "element_code").and("locations")));
+        Fields forecastFields = Fields.fields("start_time", "update_time", "forecast_model", "element_code", "area_name", "area_code");
+        aggregationOperations.add(Aggregation.project(forecastFields).and("forecast").nested(bind("forecast_time", "forecast_time").and("time_effect").and("locations")));
+        aggregationOperations.add(Aggregation.group(forecastFields).push("forecast").as("forecasts"));
+
+        Fields elementCodeFields = Fields.fields("start_time", "update_time", "forecast_model", "area_name", "area_code");
+        aggregationOperations.add(Aggregation.project(elementCodeFields).and("element_code").nested(bind("element_code", "element_code").and("forecasts")));
         aggregationOperations.add(Aggregation.group(elementCodeFields).push("element_code").as("element_codes"));
 
         Aggregation aggregation = Aggregation.newAggregation(aggregationOperations);
 
-        List<Element> elements = mongoTemplate.aggregate(aggregation, "elements", Element.class).getMappedResults();
-        return elements;
+        List<com.pingchuan.api.dto.bases.Element> elements = mongoTemplate.aggregate(aggregation, "elements", com.pingchuan.api.dto.bases.Element.class).getMappedResults();
+        return null;
+        //return elements;
     }
 
     @Override

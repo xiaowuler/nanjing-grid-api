@@ -7,7 +7,7 @@ package com.pingchuan.api.contants;
  **/
 public class ResultCode {
 
-    public static final int FAILED = 1;
+    public static final int EXCEPTION = 1;
 
     public static final int SUCCESS = 2;
 
@@ -20,5 +20,7 @@ public class ResultCode {
     public static final int API_INVALID = 6;
 
     public static final int PERMISSION_DENIED = 7;
+
+    public static final int TOKEN_INVALID = 8;
 
 }

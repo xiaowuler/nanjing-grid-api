@@ -2,17 +2,11 @@ package com.pingchuan.api.controller;
 
 import com.pingchuan.api.annotation.Action;
 import com.pingchuan.api.contants.ResultCode;
-import com.pingchuan.api.dao.InterfaceLogService;
 import com.pingchuan.api.dto.base.Element;
-import com.pingchuan.api.dto.base.LineInfo;
-import com.pingchuan.api.dto.base.PointInfo;
-import com.pingchuan.api.dto.base.ThresholdInfo;
 import com.pingchuan.api.parameter.base.*;
 import com.pingchuan.api.service.ForecastValueService;
-import com.pingchuan.api.service.TokenService;
 import com.pingchuan.api.util.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 

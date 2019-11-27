@@ -1,10 +1,9 @@
 package com.pingchuan.api.aops;
 
 import com.alibaba.fastjson.JSON;
-import com.fasterxml.jackson.core.JsonPointer;
 import com.pingchuan.api.annotation.Action;
 import com.pingchuan.api.contants.ResultCode;
-import com.pingchuan.api.dao.InterfaceLogService;
+import com.pingchuan.api.service.InterfaceLogService;
 import com.pingchuan.api.model.CallerInterface;
 import com.pingchuan.api.model.Interface;
 import com.pingchuan.api.model.InterfaceLog;
@@ -12,20 +11,17 @@ import com.pingchuan.api.parameter.Parameter;
 import com.pingchuan.api.service.CallerInterfaceService;
 import com.pingchuan.api.service.InterfaceService;
 import com.pingchuan.api.util.ApiResponse;
-import lombok.Getter;
-import lombok.Setter;
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -62,8 +58,10 @@ public class BaseAop {
 
             //验证接口访问
             Interface api = interfaceService.findOneById(action.apiId());
-            if (api == null || api.getEnabled() == 0)
+            if (api == null || api.getEnabled() == 0) {
+                interfaceLog.setResultCode(ResultCode.API_INVALID);
                 return new ApiResponse(ResultCode.API_INVALID, "接口未开启", null);
+            }
 
             //验证token;
             Parameter parameter = (Parameter) proceedingJoinPoint.getArgs()[0];
@@ -71,9 +69,9 @@ public class BaseAop {
             interfaceLog.setRegionCode(parameter.getAreaCode());
             if (!parameter.verifyToken())
             {
-                setInterfaceLog("token无效或已过期，请重新登录", (byte) 0);
+                setInterfaceLog("token无效或已过期，请重新登录", ResultCode.TOKEN_INVALID);
                 interfaceLog.setCallerCode(parameter.getCallerCode());
-                return new ApiResponse(ResultCode.FAILED, "token无效或已过期，请重新登录", null);
+                return new ApiResponse(ResultCode.TOKEN_INVALID, "token无效或已过期，请重新登录", null);
             }
 
             interfaceLog.setCallerCode(parameter.getCallerCode());
@@ -81,7 +79,7 @@ public class BaseAop {
             CallerInterface callerInterface = callerInterfaceService.findOneByCallerAndInterface(parameter.getCallerCode(), action.apiId());
             if (StringUtils.isEmpty(callerInterface))
             {
-                setInterfaceLog("权限不足，不能访问本接口，请联系管理员", (byte) 0);
+                setInterfaceLog("权限不足，不能访问本接口，请联系管理员", ResultCode.PERMISSION_DENIED);
                 return new ApiResponse(ResultCode.PERMISSION_DENIED, "权限不足，不能访问本接口，请联系管理员", null);
             }
 
@@ -90,25 +88,27 @@ public class BaseAop {
             if (errors.size() > 0)
             {
                 String errorMsg = String.join(",", errors);
-                setInterfaceLog(errorMsg, (byte) 0);
+                setInterfaceLog(errorMsg, ResultCode.PARAM_ERROR);
                 return new ApiResponse(ResultCode.PARAM_ERROR, errorMsg, null);
             }
 
-            interfaceLog.setStartTime(System.currentTimeMillis());
+            interfaceLog.setExecuteStartTime(new Timestamp(System.currentTimeMillis()));
             ApiResponse apiResponse =  (ApiResponse) proceedingJoinPoint.proceed();
-            interfaceLog.setEndTime(System.currentTimeMillis());
+            interfaceLog.setExecuteEndTime(new Timestamp(System.currentTimeMillis()));
 
-            if (StringUtils.isEmpty(apiResponse))
+            if (StringUtils.isEmpty(apiResponse)) {
                 return apiResponse;
-            if (apiResponse.getRetCode() == ResultCode.SUCCESS)
-                setInterfaceLog(apiResponse.getRetMsg(), (byte) 1);
-            else
-                setInterfaceLog(apiResponse.getRetMsg(), (byte) 0);
+            }
+            if (apiResponse.getRetCode() == ResultCode.SUCCESS) {
+                interfaceLog.setState((byte) 1);
+                setInterfaceLog(apiResponse.getRetMsg(), ResultCode.SUCCESS);
+            } else {
+                setInterfaceLog(apiResponse.getRetMsg(), ResultCode.EXCEPTION);
+            }
             return apiResponse;
 
         }catch (Exception e){
             return getExceptionResult(e.toString());
-
         } catch (Throwable throwable) {
             return getExceptionResult(throwable.toString());
         }
@@ -116,36 +116,30 @@ public class BaseAop {
 
     @After("annotationPointCut()")
     public void after(){
-        interfaceLog.setStopTime(System.currentTimeMillis());
+        interfaceLog.setRequestEndTime(new Timestamp(System.currentTimeMillis()));
         if (!StringUtils.isEmpty(interfaceLog.getCallerCode())) {
             interfaceLogService.insertOne(interfaceLog);
-        }
-
-        if (!StringUtils.isEmpty(interfaceLog.getInterfaceId())){
-            interfaceService.updateOne(interfaceLog.getInterfaceId(), (byte) 1);
         }
     }
 
     private ApiResponse getExceptionResult(String errorMsg){
-        if(!StringUtils.isEmpty(interfaceLog.getStartTime())) {
-            interfaceLog.setEndTime(System.currentTimeMillis());
+        if(!StringUtils.isEmpty(interfaceLog.getExecuteStartTime())) {
+            interfaceLog.setExecuteEndTime(new Timestamp(System.currentTimeMillis()));
         }
 
-        if (!StringUtils.isEmpty(interfaceLog.getInterfaceId())){
-            interfaceService.updateOne(interfaceLog.getInterfaceId(), (byte) 0);
-        }
-
+        interfaceLog.setResultCode(ResultCode.EXCEPTION);
         interfaceLog.setErrorMessage(errorMsg);
-        return new ApiResponse(ResultCode.FAILED, errorMsg, null);
+        return new ApiResponse(ResultCode.EXCEPTION, errorMsg, null);
     }
 
-    private void setInterfaceLog(String errorMsg, byte state){
+    private void setInterfaceLog(String errorMsg, int resultCode){
         interfaceLog.setErrorMessage(errorMsg);
-        interfaceLog.setState(state);
+        interfaceLog.setResultCode(resultCode);
     }
 
     private void setInterfaceLogRequestInfo(){
-        interfaceLog.setCreateTime(System.currentTimeMillis());
+        interfaceLog.setState((byte) 0);
+        interfaceLog.setRequestStartTime(new Timestamp(System.currentTimeMillis()));
         ServletRequestAttributes sra = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = sra.getRequest();
         interfaceLog.setRequestType(request.getMethod());

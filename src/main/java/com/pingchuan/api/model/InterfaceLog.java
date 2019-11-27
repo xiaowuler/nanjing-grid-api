@@ -2,6 +2,9 @@ package com.pingchuan.api.model;
 
 import lombok.Data;
 
+import java.sql.Timestamp;
+import java.util.Date;
+
 /**
  * @description: 日志类
  * @author: XW
@@ -21,17 +24,19 @@ public class InterfaceLog {
 
     private String errorMessage;
 
-    private Long startTime;
+    private Timestamp requestStartTime;
 
-    private Long endTime;
+    private Timestamp executeStartTime;
 
-    private Long createTime;
+    private Timestamp executeEndTime;
 
-    private Long stopTime;
+    private Timestamp requestEndTime;
 
     private String requestType;
 
     private String hostAddress;
 
     private String regionCode;
+
+    private Integer resultCode;
 }

@@ -1,4 +1,4 @@
-package com.pingchuan.api.dao;
+package com.pingchuan.api.service;
 
 import com.pingchuan.api.model.InterfaceLog;
 import org.apache.ibatis.annotations.Param;
